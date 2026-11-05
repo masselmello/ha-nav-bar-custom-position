@@ -256,14 +256,17 @@
   }
 
   // The panel can replace its hui-root without a navigation (for example while
-  // the dashboard reloads), so we also watch the panel itself.
+  // the dashboard reloads), so we also watch the panel itself. The observer
+  // fires before the new hui-root's first Lit render, when `.header` doesn't
+  // exist yet, so instead of applying once we start a fresh scan: its repeated
+  // checks are what eventually find and measure the header.
   function watchPanelOnce(panelShadowRoot) {
     if (watchedPanels.has(panelShadowRoot)) {
       return;
     }
     watchedPanels.add(panelShadowRoot);
 
-    const observer = new MutationObserver(() => moveNavbarInPanel(panelShadowRoot));
+    const observer = new MutationObserver(scanForDashboard);
     observer.observe(panelShadowRoot, { childList: true, subtree: true });
   }
 
