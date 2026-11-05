@@ -32,11 +32,13 @@ http://<hass>:8123/some-dashboard/some-view?navbar=bottom&navbar_cache
 
 Thereafter, page loads that don't specify any `navbar` query parameters will default to moving the navbar to the bottom.
 
-To clear the saved position and return the navbar to the top on future page loads, use `navbar_cache` without `navbar=...`:
+To clear the saved position and return the navbar to the top on future page loads, use `navbar_cache` without `navbar=...` (or with `navbar=top`):
 
 ```
 http://<hass>:8123/some-dashboard/some-view?navbar_cache
 ```
+
+`navbar=top` also works without `navbar_cache` to show the navbar at the top for a single page load, even if `bottom` is saved. Values other than `bottom` and `top` are treated as `top`.
 
 There will likely be additional ways to configure this plugin in the future - pull requests gladly accepted.
 
@@ -44,11 +46,11 @@ There will likely be additional ways to configure this plugin in the future - pu
 
 For scenarios where it isn't possible to edit the URL directly (e.g. when using the Home Assistant mobile apps), you can toggle the navigation bar position on a per-device basis using the `Navbar Position Configuration Card` custom card.
 
-Add it to a dashboard of your choosing, then click the card's "toggle navigation bar position" button on any device where you want to move the navbar to the bottom of the screen. The button will save the change to `localStorage`; you can then get rid of the card and the navbar will continue to show up at the bottom of the screen on the device in question.
+Add it to a dashboard of your choosing. The card shows the position saved on the current device ("Saved position on this device: top" or "bottom"). Click its "Move navigation bar to the bottom" button on any device where you want the navbar at the bottom of the screen; on a device where it is already at the bottom, the button reads "Move navigation bar to the top". The button saves the change to `localStorage` and reloads the page; you can then get rid of the card and the navbar will continue to show up at the bottom of the screen on the device in question.
 
 # Limitations
 
-The page is scanned every second to see if the header has appeared or has been replaced. This means that while switching between views within a single dashboard leaves the navbar at the bottom, **switching between dashboards or other pages in the Home Assistant UI will cause the navbar to jump back to the top for ~1 second when you return to a dashboard.** PRs gladly accepted to sprinkle some more `MutationObserver`s around to get rid of that delay.
+This only moves the dashboard navigation bar; it doesn't move navigation bars associated with any other screens. PRs welcome to handle that as well.
 
-This also only moves the dashboard navigation bar; it doesn't move navigation bars associated with any other screens. PRs welcome to handle that as well.
+The plugin relies on internal parts of the Home Assistant frontend. A Home Assistant update that changes them can stop the navbar from moving; check the browser console for "Navbar Position" messages when reporting an issue.
 
